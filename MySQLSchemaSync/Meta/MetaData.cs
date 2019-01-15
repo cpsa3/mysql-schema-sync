@@ -9,6 +9,8 @@ namespace MySQLSchemaSync.Meta
 {
     /// <summary>
     /// 数据库元数据
+    /// TODO:异常情况校验
+    /// schema不存在的情况
     /// </summary>
     public class MetaData
     {

@@ -52,12 +52,6 @@ namespace MySQLSchemaSync.Test
             return provider;
         }
 
-        //static void BuildContainer(ContainerBuilder builder)
-        //{
-        //    var x = configuration["connectionStrings:mysql"];
-        //    builder.Register(p => new SQLiteConnection(configuration["connectionStrings:mysql"])).As<IDbConnection>().OwnedByLifetimeScope();
-        //}
-
         public static T Resolve<T>()
         {
             return provider.GetService<T>();

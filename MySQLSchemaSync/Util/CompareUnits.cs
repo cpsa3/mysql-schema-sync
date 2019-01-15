@@ -6,50 +6,49 @@ using Dapper;
 
 namespace MySQLSchemaSync.Util
 {
-    public class CompareUnits
+    /// <summary>
+    /// 
+    /// </summary>
+    public class CompareUnits : ICompareUnits
     {
+        /// <summary>
+        /// source database metadata
+        /// </summary>
         public MetaData Source { get; private set; }
+
+        /// <summary>
+        /// target database metadata
+        /// </summary>
         public MetaData Target { get; private set; }
+
+        /// <summary>
+        /// change script for sync structure (target -> source)
+        /// </summary>
         public List<String> ChangeSql { get; private set; }
 
-        public CompareUnits(MetaData source, MetaData target)
+        public CompareUnitsOption Option { get; private set; }
+
+        public CompareUnits(MetaData source, MetaData target, CompareUnitsOption option = null)
         {
             this.Source = source;
             this.Target = target;
+            this.Option = option ?? new CompareUnitsOption();
             this.ChangeSql = new List<string>();
         }
 
         /// <summary>
-        /// 比较所有表
+        /// compare all tables
         /// </summary>
         public void Compare()
         {
             this.ChangeSql = new List<string>();
 
-            CompareSchema();
+            InitMetaData();
             CompareTables();
-            CompareKeys();
         }
 
         /// <summary>
-        /// Apply DDL
-        /// </summary>
-        public void ApplyChangeSql()
-        {
-            if (ChangeSql == null)
-                return;
-
-            using (var con = Target.GetConnection())
-            {
-                foreach (var sql in ChangeSql)
-                {
-                    con.Execute(sql);
-                }
-            }
-        }
-
-        /// <summary>
-        /// 比较具体的两张表
+        /// compare single table
         /// </summary>
         /// <param name="sourceTableName"></param>
         /// <param name="targetTableName"></param>
@@ -58,7 +57,7 @@ namespace MySQLSchemaSync.Util
         {
             this.ChangeSql = new List<string>();
 
-            CompareSchema();
+            InitMetaData();
 
             if (!Source.Tables.ContainsKey(sourceTableName))
             {
@@ -73,17 +72,32 @@ namespace MySQLSchemaSync.Util
             CompareSingleTable(Source.Tables[sourceTableName], Target.Tables[targetTableName]);
         }
 
+        /// <summary>
+        /// apply ddl for target schema
+        /// </summary>
+        public void ApplyChanges()
+        {
+            // todo 返回结果
+
+            if (ChangeSql == null)
+                return;
+
+            using (var con = Target.GetConnection())
+            {
+                foreach (var sql in ChangeSql)
+                {
+                    con.Execute(sql);
+                }
+            }
+        }
 
         #region Private Methods
 
         /// <summary>
-        /// vaify schema
+        /// InitMetaData
         /// </summary>
-        private void CompareSchema()
+        private void InitMetaData()
         {
-            // if not exist
-            // changeSql.add("create database if not exists " + SqlUtil.getDbString(source.getSchema())+";");
-
             Source.Init();
             Target.Init();
         }
@@ -115,8 +129,18 @@ namespace MySQLSchemaSync.Util
         private void CompareSingleTable(Table sourceTable, Table targetTable)
         {
             CompareColumns(sourceTable, targetTable);
+
+            if (Option.IsSyncIndex)
+            {
+                CompareSingleKeys(sourceTable, targetTable);
+            }
         }
 
+        /// <summary>
+        /// compare table column
+        /// </summary>
+        /// <param name="sourceTable"></param>
+        /// <param name="targetTable"></param>
         private void CompareColumns(Table sourceTable, Table targetTable)
         {
             // 记录最后一个比较的column
@@ -166,18 +190,27 @@ namespace MySQLSchemaSync.Util
                 after = column.Name;
             }
 
-            // remove the target redundancy columns
-            foreach (var column in targetTable.Columns.Values)
+            if (Option.IsDropRedundancy)
             {
-                if (!sourceTable.Columns.ContainsKey(column.Name))
+                // remove the target redundancy columns
+                foreach (var column in targetTable.Columns.Values)
                 {
-                    // redundancy , so drop it
-                    var sql = $"alter table {Target.Schema}.{targetTable.TableName} drop COLUMN {column.Name} ";
-                    ChangeSql.Add(sql + ";");
+                    if (!sourceTable.Columns.ContainsKey(column.Name))
+                    {
+                        // redundancy , so drop it
+                        var sql = $"alter table {Target.Schema}.{targetTable.TableName} drop COLUMN {column.Name} ";
+                        ChangeSql.Add(sql + ";");
+                    }
                 }
             }
         }
 
+        /// <summary>
+        /// compare column property
+        /// </summary>
+        /// <param name="sourceColumn"></param>
+        /// <param name="targetColumn"></param>
+        /// <returns></returns>
         private string CompareSingleColumn(Column sourceColumn, Column targetColumn)
         {
             List<string> modify = new List<string>();
@@ -222,22 +255,7 @@ namespace MySQLSchemaSync.Util
         }
 
         /// <summary>
-        /// compare the index for all table
-        /// </summary>
-        private void CompareKeys()
-        {
-            foreach (var t in Source.Tables.Values)
-            {
-                // 这样就需要比较两者的索引)
-                if (Target.Tables.ContainsKey(t.TableName))
-                {
-                    CompareSingleKeys(t, Target.Tables[t.TableName]);
-                }
-            }
-        }
-
-        /// <summary>
-        /// 
+        /// compare table index
         /// </summary>
         /// <param name="sourceTable"></param>
         /// <param name="targetTable"></param>
@@ -274,25 +292,42 @@ namespace MySQLSchemaSync.Util
                 }
             }
 
-            foreach (var index in targetTable.Indexes.Values)
+            if (Option.IsDropRedundancy)
             {
-                if (sourceTable.Indexes.ContainsKey(index.IndexName) == false)
+                foreach (var index in targetTable.Indexes.Values)
                 {
-                    // drop index
-                    var sql = $"alter table {Target.Schema}.{targetTable.TableName} ";
-                    if (index.IndexName == "PRIMARY")
+                    if (sourceTable.Indexes.ContainsKey(index.IndexName) == false)
                     {
-                        sql += "drop primary key ";
+                        // drop index
+                        var sql = $"alter table {Target.Schema}.{targetTable.TableName} ";
+                        if (index.IndexName == "PRIMARY")
+                        {
+                            sql += "drop primary key ";
+                        }
+                        else
+                        {
+                            sql += $"drop index {index.IndexName} ";
+                        }
+                        ChangeSql.Add(sql + ";");
                     }
-                    else
-                    {
-                        sql += $"drop index {index.IndexName} ";
-                    }
-                    ChangeSql.Add(sql + ";");
                 }
             }
         }
 
         #endregion
+    }
+
+    public class CompareUnitsOption
+    {
+        /// <summary>
+        /// is sync table index
+        /// 是否同步表的索引（默认不同步）
+        /// </summary>
+        public bool IsSyncIndex { get; set; } = false;
+
+        /// <summary>
+        /// 是否删除target中多余的column和index（默认不删除）
+        /// </summary>
+        public bool IsDropRedundancy { get; set; } = false;
     }
 }

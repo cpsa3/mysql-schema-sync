@@ -40,12 +40,12 @@ namespace MySQLSchemaSync.Test
             var connectionString = "server=localhost;port=3306;Initial Catalog=service_architecture_test;user id=root;password=123456;ConnectionReset=false";
             MetaData metaData = new MetaData(connectionString, "service_architecture_test");
 
-            var compareUnits = new CompareUnits(metaData, metaData);
+            ICompareUnits compareUnits = new CompareUnits(metaData, metaData, new CompareUnitsOption { IsDropRedundancy = true });
 
             compareUnits.Compare("api7_event_received", "domain_lego05event_received");
             Assert.True(compareUnits.ChangeSql.Any());
-
-            compareUnits.ApplyChangeSql();
+            // check changesql before apply
+            //compareUnits.ApplyChanges();
 
             compareUnits.Compare("api7_event_received", "domain_lego05event_received");
             Assert.False(compareUnits.ChangeSql.Any());
