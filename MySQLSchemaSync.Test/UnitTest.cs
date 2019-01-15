@@ -13,7 +13,7 @@ namespace MySQLSchemaSync.Test
         {
             var connectionString = "server=localhost;port=3306;Initial Catalog=service_architecture_test;user id=root;password=123456;ConnectionReset=false";
 
-            MetaData metaData = new MetaData(connectionString, "service_architecture_test");
+            MetaData metaData = new MetaData(connectionString);
 
             metaData.Init();
 
@@ -38,7 +38,7 @@ namespace MySQLSchemaSync.Test
         public void CompareSingleTableTest()
         {
             var connectionString = "server=localhost;port=3306;Initial Catalog=service_architecture_test;user id=root;password=123456;ConnectionReset=false";
-            MetaData metaData = new MetaData(connectionString, "service_architecture_test");
+            MetaData metaData = new MetaData(connectionString);
 
             ICompareUnits compareUnits = new CompareUnits(metaData, metaData, new CompareUnitsOption { IsDropRedundancy = true });
 

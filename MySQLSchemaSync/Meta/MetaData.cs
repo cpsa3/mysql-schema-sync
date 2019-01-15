@@ -24,17 +24,13 @@ namespace MySQLSchemaSync.Meta
         /// </summary>
         public string Schema { get; private set; }
 
-        /// <summary>
-        /// con
-        /// </summary>
         private IDbConnection con;
 
         public Dictionary<string, Table> Tables { get; private set; }
 
-        public MetaData(string connectionString, string schema)
+        public MetaData(string connectionString)
         {
             this.connectionString = connectionString;
-            this.Schema = schema;
         }
 
         public void Init()
@@ -42,12 +38,18 @@ namespace MySQLSchemaSync.Meta
             try
             {
                 this.con = new MySql.Data.MySqlClient.MySqlConnection(this.connectionString);
+                this.Schema = this.Schema ?? con.Database;
+
                 this.Tables = new Dictionary<string, Table>();
 
                 GetTablesFromDb();
                 GetCreateTables();
                 GetAllTableColumns();
                 GetAllTableKeys();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
             finally
             {
