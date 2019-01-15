@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net462;</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>XiaoBao Online Ltd.</Authors>
     <Company>XiaoBao Online Ltd.</Company>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Description>MySQL表结构比较和同步</Description>
     <PackageReleaseNotes>
-      支持所有表和单独两个表的比较；支持是否同步索引和是否删除冗余字段选项
+      降低mysql.data依赖版本（6.10.8 -> 6.10.7）；增加net462版本
     </PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/cpsa3/mysql-schema-sync</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
@@ -17,7 +17,13 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.5" />
-    <PackageReference Include="MySql.Data" Version="6.10.8" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)'=='net462'">
+    <PackageReference Include="MySql.Data" Version="6.9.10" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
+    <PackageReference Include="MySql.Data" Version="6.10.7" />
   </ItemGroup>
 
 </Project>
