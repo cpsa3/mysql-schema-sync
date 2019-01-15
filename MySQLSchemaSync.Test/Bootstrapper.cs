@@ -29,7 +29,7 @@ namespace MySQLSchemaSync.Test
 
                         provider = CreateServiceProvider(services =>
                         {
-                            services.AddScoped<IDbConnection>(p => new MySql.Data.MySqlClient.MySqlConnection(configuration["connectionStrings:mysql"]));
+                            services.AddScoped<IDbConnection>(p => new MySql.Data.MySqlClient.MySqlConnection(configuration["connectionStrings:db1"]));
                         });
                     }
                 }
@@ -60,6 +60,11 @@ namespace MySQLSchemaSync.Test
         public static IServiceScope GetScope()
         {
             return provider.GetService<IServiceScopeFactory>().CreateScope();
+        }
+
+        public static IConfiguration GetConfiguration()
+        {
+            return configuration;
         }
     }
 }

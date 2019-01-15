@@ -77,7 +77,7 @@ namespace MySQLSchemaSync.Util
         /// </summary>
         public void ApplyChanges()
         {
-            // todo 返回结果
+            // todo 返回结果&超时设置
 
             if (ChangeSql == null)
                 return;
