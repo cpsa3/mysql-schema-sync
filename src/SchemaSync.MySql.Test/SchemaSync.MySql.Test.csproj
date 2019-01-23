@@ -18,10 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MySQLSchemaSync\MySQLSchemaSync.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -32,6 +28,10 @@
 
   <ItemGroup>
     <Folder Include="InitTestSql\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SchemaSync.MySql\SchemaSync.MySql.csproj" />
   </ItemGroup>
 
 </Project>

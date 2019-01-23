@@ -1,10 +1,10 @@
-using MySQLSchemaSync.Meta;
-using MySQLSchemaSync.Util;
+using SchemaSync.MySql.Meta;
+using SchemaSync.MySql.Util;
 using System;
 using System.Linq;
 using Xunit;
 
-namespace MySQLSchemaSync.Test
+namespace SchemaSync.MySql.Test
 {
     /// <summary>
     /// 不同数据库之间同步

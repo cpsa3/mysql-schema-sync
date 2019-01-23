@@ -1,9 +1,9 @@
-﻿using MySQLSchemaSync.Meta;
+﻿using SchemaSync.MySql.Meta;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MySQLSchemaSync.Util
+namespace SchemaSync.MySql.Util
 {
     public interface ICompareUnits
     {

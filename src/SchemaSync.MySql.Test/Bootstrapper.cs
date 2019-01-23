@@ -1,13 +1,14 @@
 ﻿using Autofac;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using Xiaobao.Framework.DependencyInjection;
 
-namespace MySQLSchemaSync.Test
+namespace SchemaSync.MySql.Test
 {
     public class Bootstrapper
     {
@@ -29,7 +30,7 @@ namespace MySQLSchemaSync.Test
 
                         provider = CreateServiceProvider(services =>
                         {
-                            services.AddScoped<IDbConnection>(p => new MySql.Data.MySqlClient.MySqlConnection(configuration["connectionStrings:db1"]));
+                            services.AddScoped<IDbConnection>(p => new MySqlConnection(configuration["connectionStrings:db1"]));
                         });
                     }
                 }

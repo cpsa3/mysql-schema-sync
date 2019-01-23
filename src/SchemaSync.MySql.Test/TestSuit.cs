@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 
-namespace MySQLSchemaSync.Test
+namespace SchemaSync.MySql.Test
 {
     /// <summary>
     /// 单元测试基类

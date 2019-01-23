@@ -4,8 +4,9 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using Dapper;
+using MySql.Data.MySqlClient;
 
-namespace MySQLSchemaSync.Meta
+namespace SchemaSync.MySql.Meta
 {
     /// <summary>
     /// 数据库元数据
@@ -37,7 +38,7 @@ namespace MySQLSchemaSync.Meta
         {
             try
             {
-                this.con = new MySql.Data.MySqlClient.MySqlConnection(this.connectionString);
+                this.con = new MySqlConnection(this.connectionString);
                 this.Schema = this.Schema ?? con.Database;
 
                 this.Tables = new Dictionary<string, Table>();
@@ -59,7 +60,7 @@ namespace MySQLSchemaSync.Meta
 
         public IDbConnection GetConnection()
         {
-            return new MySql.Data.MySqlClient.MySqlConnection(this.connectionString);
+            return new MySqlConnection(this.connectionString);
         }
 
         /// <summary>

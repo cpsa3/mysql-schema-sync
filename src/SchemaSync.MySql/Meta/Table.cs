@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MySQLSchemaSync.Meta
+namespace SchemaSync.MySql.Meta
 {
     /// <summary>
     /// 表信息
