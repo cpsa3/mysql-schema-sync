@@ -65,10 +65,11 @@ namespace SchemaSync.MySql.Meta
 
         /// <summary>
         /// 获取所有表信息
+        /// https://dev.mysql.com/doc/refman/5.7/en/show-tables.html
         /// </summary>
         private void GetTablesFromDb()
         {
-            List<string> tables = con.Query<string>($"show tables from {Schema}").AsList();
+            List<string> tables = con.Query<string>($"show full tables from {Schema} where Table_type = 'BASE TABLE'").AsList();
 
             foreach (var t in tables)
             {
@@ -89,7 +90,8 @@ namespace SchemaSync.MySql.Meta
 
         private void GetCreateTable(Table table)
         {
-            var sql = $"show create table {Schema}.{table.TableName}";
+            // var sql = $"show create table {Schema}.{table.TableName}";
+            var sql = $"show create table `{table.TableName}`";
             var reader = con.ExecuteReader(sql);
 
             if (reader.Read())
@@ -152,7 +154,8 @@ namespace SchemaSync.MySql.Meta
 
         private void GetTableKeys(Table table)
         {
-            var sql = $"show keys from {Schema}.{table.TableName}";
+            // var sql = $"show keys from {Schema}.{table.TableName}";
+            var sql = $"show keys from `{table.TableName}`";
             var reader = con.ExecuteReader(sql);
 
             Index last = null;

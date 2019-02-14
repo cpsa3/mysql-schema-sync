@@ -1,5 +1,7 @@
 DROP TABLE IF EXISTS `event_received_template`;
 DROP TABLE IF EXISTS `event_received_local`;
+DROP TABLE IF EXISTS `event.published`;
+DROP VIEW IF EXISTS `event_received_template_view`;
 
 CREATE TABLE `event_received_template` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -34,3 +36,17 @@ CREATE TABLE `event_received_local` (
   KEY `idx_statusname` (`StatusName`),
   KEY `idx_eventid` (`EventId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `event.published` (
+  `Id` int(127) NOT NULL AUTO_INCREMENT,
+  `Name` varchar(200) NOT NULL,
+  `Content` longtext,
+  `Retries` int(11) DEFAULT NULL,
+  `Added` datetime NOT NULL,
+  `ExpiresAt` datetime DEFAULT NULL,
+  `StatusName` varchar(40) NOT NULL,
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE VIEW `event_received_template_view` AS 
+select * from event_received_template where Name = 'test';
