@@ -40,6 +40,31 @@ namespace SchemaSync.MySql.Test
             Assert.Equal("datetime", metaData.Tables["event_received_template"].Columns["NextRetryTime"].Type);
         }
 
+        [Fact]
+        public void MetaData_FilterTableNames_Single_Test()
+        {
+            var metaData = new MetaData(connectionString1, new System.Collections.Generic.List<string> { "event_received_template" });
+
+            metaData.Init();
+
+            Assert.Equal("demo", metaData.Schema);
+            Assert.True(metaData.Tables.Count == 1);
+            Assert.True(metaData.Tables.ContainsKey("event_received_template"));
+        }
+
+        [Fact]
+        public void MetaData_FilterTableNames_Multiple_Test()
+        {
+            var metaData = new MetaData(connectionString1, new System.Collections.Generic.List<string> { "event_received_template", "event_received_local" });
+
+            metaData.Init();
+
+            Assert.Equal("demo", metaData.Schema);
+            Assert.True(metaData.Tables.Count == 2);
+            Assert.True(metaData.Tables.ContainsKey("event_received_template"));
+            Assert.True(metaData.Tables.ContainsKey("event_received_local"));
+        }
+
         /// <summary>
         /// ÐÂÔöcolumn²¢ÇÒapply
         /// </summary>

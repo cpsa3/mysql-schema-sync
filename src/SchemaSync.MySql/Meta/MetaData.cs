@@ -21,6 +21,11 @@ namespace SchemaSync.MySql.Meta
         private string connectionString;
 
         /// <summary>
+        /// 过滤表名
+        /// </summary>
+        private List<string> filterTableNames;
+
+        /// <summary>
         /// TABLE SCHEMA
         /// </summary>
         public string Schema { get; private set; }
@@ -29,9 +34,10 @@ namespace SchemaSync.MySql.Meta
 
         public Dictionary<string, Table> Tables { get; private set; }
 
-        public MetaData(string connectionString)
+        public MetaData(string connectionString, List<string> filterTableNames = null)
         {
             this.connectionString = connectionString;
+            this.filterTableNames = filterTableNames;
         }
 
         public void Init()
@@ -69,7 +75,18 @@ namespace SchemaSync.MySql.Meta
         /// </summary>
         private void GetTablesFromDb()
         {
-            List<string> tables = con.Query<string>($"show full tables from {Schema} where Table_type = 'BASE TABLE'").AsList();
+            string sql = string.Empty;
+
+            if (filterTableNames != null && filterTableNames.Any())
+            {
+                sql = $"show full tables from {Schema} where Table_type = 'BASE TABLE' and Tables_in_{Schema} in ('{string.Join("','", filterTableNames)}')";
+            }
+            else
+            {
+                sql = $"show full tables from {Schema} where Table_type = 'BASE TABLE'";
+            }
+
+            List<string> tables = con.Query<string>(sql).AsList();
 
             foreach (var t in tables)
             {

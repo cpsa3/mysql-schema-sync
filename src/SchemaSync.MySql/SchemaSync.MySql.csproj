@@ -5,10 +5,10 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>XiaoBao Online Ltd.</Authors>
     <Company>XiaoBao Online Ltd.</Company>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
     <Description>MySQL表结构比较和同步</Description>
     <PackageReleaseNotes>
-      修复表名带点时报错问题，同时排除视图
+      支持根据表名过滤
     </PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/cpsa3/mysql-schema-sync</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
