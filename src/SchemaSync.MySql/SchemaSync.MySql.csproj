@@ -5,10 +5,10 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>XiaoBao Online Ltd.</Authors>
     <Company>XiaoBao Online Ltd.</Company>
-    <Version>1.0.4</Version>
+    <Version>2.0.0</Version>
     <Description>MySQL表结构比较和同步</Description>
     <PackageReleaseNotes>
-      支持根据表名过滤
+      MySql.Data替换成MySqlConnector
     </PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/cpsa3/mysql-schema-sync</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
@@ -16,13 +16,10 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='net462'">
-    <PackageReference Include="MySql.Data" Version="6.9.10" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
-    <PackageReference Include="MySql.Data" Version="6.10.7" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.5" />
+    <PackageReference Include="MySqlConnector" Version="0.62.0" />
   </ItemGroup>
 
 </Project>
